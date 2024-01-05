@@ -1,5 +1,18 @@
 const express = require('express');
 /**
+ * helmet là một middleware bảo mật cho Express.js. 
+ * Nó giúp bảo vệ ứng dụng web bằng cách thiết lập các header HTTP liên quan đến an ninh. 
+ * Express Helmet bao gồm nhiều tính năng như:
+ * - XSS Protection (Bảo vệ chống tấn công Cross-Site Scripting): 
+ *    Thiết lập header X-XSS-Protection để ngăn chặn các cuộc tấn công XSS.
+ * - Frameguard (Bảo vệ chống clickjacking): 
+ *    Thiết lập header X-Frame-Options để ngăn chặn việc nhúng trang web vào trong một <frame> hoặc <iframe>.
+ * - Bảo vệ chống các tấn công liên quan đến MIME: 
+ *    Đặt header X-Content-Type-Options để ngăn chặn các tấn công liên quan đến kiểu MIME không mong muốn.
+ * - Chống tấn công CRSF (Cross-Site Request Forgery): Cung cấp middleware để giúp bảo vệ chống tấn công CRSF.
+ */
+const { default: helmet } = require('helmet');
+/**
  * morgan: la mot thu vien de ma in ra cac log cua chung ta 
  * khi ma mot nguoi dung chay mot request
 */
@@ -13,7 +26,7 @@ const app = express();
  * trước khi chúng được xử lý bởi các route handlers chính.
 */
 
-app.use(morgan("dev"))
+app.use(morgan("dev"));
 
 /** 
  * morgan('dev') được sử dụng để tạo ra một logger HTTP đơn giản 
@@ -59,6 +72,9 @@ app.use(morgan("dev"))
  * chỉ cung cấp thông tin cần thiết nhất về mỗi yêu cầu HTTP.
  * Nó bao gồm các thông tin như method (phương thức), đường dẫn URL và mã trạng thái.
  */
+
+app.use(helmet());
+
 // init db
 
 // init routes
