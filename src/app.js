@@ -1,3 +1,4 @@
+const compression = require('compression');
 const express = require('express');
 /**
  * helmet là một middleware bảo mật cho Express.js. 
@@ -19,7 +20,15 @@ const { default: helmet } = require('helmet');
 const morgan = require('morgan');
 const app = express();
 
-// init middlewares
+
+
+
+
+/**
+ * 
+ * init middlewares
+ *  
+ **/ 
 
 /** 
  * Middleware có thể được sử dụng để xử lý các yêu cầu HTTP
@@ -74,6 +83,7 @@ app.use(morgan("dev"));
  */
 
 app.use(helmet());
+app.use(compression());
 
 // init db
 
