@@ -1,4 +1,23 @@
+/**
+ * Giảm kích thước dữ liệu: Compression giúp giảm kích thước của dữ liệu gửi từ máy chủ đến trình duyệt hoặc 
+ * ứng dụng khách, giúp tối ưu hóa băng thông mạng và tăng tốc độ tải trang. 
+ * Tối ưu hóa hiệu suất: Khi dữ liệu được nén, việc truyền tải qua mạng trở nên nhanh chóng hơn,
+ * giảm thời gian phản hồi từ máy chủ và cải thiện trải nghiệm người dùng.
+ * - Ưu điểm của việc sử dụng compression trong Node.js:
+ *    + Tăng tốc độ tải trang: Dữ liệu nén giúp giảm thời gian tải trang, cải thiện trải nghiệm người dùng.
+ *    + Tiết kiệm băng thông: Dữ liệu nén giảm lưu lượng mạng cần thiết cho việc truyền tải dữ liệu,
+ *      giúp tiết kiệm băng thông mạng.
+ *    + Cải thiện hiệu suất: Tối ưu hóa việc truyền tải dữ liệu giúp cải thiện hiệu suất ứng dụng. 
+ * - Nhược điểm của việc sử dụng compression trong Node.js:
+ *    + Tài nguyên máy tính: Quá trình nén và giải nén dữ liệu tốn tài nguyên máy tính, đặc biệt là CPU.
+ *      Trong một số trường hợp, việc nén và giải nén có thể gây tăng cường hoạt động của CPU,
+ *      ảnh hưởng đến hiệu suất của máy chủ.
+ *    + Khả năng tương thích: Mặc dù hầu hết các trình duyệt web đều hỗ trợ các phương thức nén như gzip hoặc deflate,
+ *      nhưng có thể có một số trường hợp khi không phải tất cả các trình duyệt hoặc
+ *      ứng dụng khách đều hỗ trợ các phương thức nén này.
+ */
 const compression = require('compression');
+
 const express = require('express');
 /**
  * helmet là một middleware bảo mật cho Express.js. 
@@ -86,6 +105,7 @@ app.use(helmet());
 app.use(compression());
 
 // init db
+require('./dbs/init.mongodb');
 
 // init routes
 

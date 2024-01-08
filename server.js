@@ -1,4 +1,5 @@
 const app = require("./src/app");
+const mongoose = require('mongoose');
 
 const PORT = 3003;
 
@@ -7,6 +8,9 @@ const server = app.listen(PORT, () => {
 });
 
 process.on('SIGINT', () => {
-  server.close(() => console.log(`Exit Server Express`));
+  server.close(() => {
+    console.log(`Exit Server Express`);
+    mongoose.connection.close();
+  });
   // notify.send(ping...)
 });
