@@ -1,3 +1,4 @@
+const express = require('express');
 /**
  * Giảm kích thước dữ liệu: Compression giúp giảm kích thước của dữ liệu gửi từ máy chủ đến trình duyệt hoặc 
  * ứng dụng khách, giúp tối ưu hóa băng thông mạng và tăng tốc độ tải trang. 
@@ -18,7 +19,6 @@
  */
 const compression = require('compression');
 
-const express = require('express');
 /**
  * helmet là một middleware bảo mật cho Express.js. 
  * Nó giúp bảo vệ ứng dụng web bằng cách thiết lập các header HTTP liên quan đến an ninh. 
