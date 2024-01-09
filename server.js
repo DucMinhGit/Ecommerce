@@ -1,7 +1,7 @@
 const app = require("./src/app");
 const mongoose = require('mongoose');
 
-const PORT = 3003;
+const PORT = process.env.DEV_APP_PORT || 8888;
 
 const server = app.listen(PORT, () => {
   console.log(`WSV eCommerce start with ${PORT}`);

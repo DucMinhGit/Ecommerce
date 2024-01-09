@@ -37,6 +37,9 @@ const { default: helmet } = require('helmet');
  * khi ma mot nguoi dung chay mot request
 */
 const morgan = require('morgan');
+
+require('dotenv').config();
+
 const app = express();
 
 
