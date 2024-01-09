@@ -20,7 +20,7 @@ class Database
       mongoose.set('debug', true);
       mongoose.set('debug', {color: true});
     }
-    mongoose.connect(connectString)
+    mongoose.connect(connectString, { maxPoolSize: 10 })
       .then(_ => console.log(`Connected Mongodb Success`))
       .catch((error) => console.log(`Error Connect`));
   }
