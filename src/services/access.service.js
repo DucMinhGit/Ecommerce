@@ -57,11 +57,9 @@ class AccessService {
             message: 'publicKeyString error'
           }
         }
-        console.log('publicKeyString', publicKeyString);
         const publicKeyObject = crypto.createPublicKey(publicKeyString);
 
         const tokens = await createTokenPair({userId: newShop._id, email}, publicKeyObject, privateKey);
-        console.log(`Created Token Success::`, tokens);
 
         return {
           code: 201,
