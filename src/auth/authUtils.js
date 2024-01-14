@@ -1,6 +1,28 @@
 'use strict'
 
 const JWT = require('jsonwebtoken');
+const crypto = require('crypto');
+
+const generateKeyPairPromise = () =>  {
+  return new Promise((resolve, reject) => {
+    try {
+      const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
+        modulusLength: 4096,
+        publicKeyEncoding: {
+          type: 'pkcs1',
+          format: 'pem'
+        },
+        privateKeyEncoding: {
+          type: 'pkcs1',
+          format: 'pem'
+        }
+      });
+      resolve({ privateKey, publicKey });
+    } catch (error) {
+      reject(error);
+    }
+  })
+}
 
 const createTokenPair = async ( payload, publicKey, privateKey) => {
   try {
@@ -30,5 +52,6 @@ const createTokenPair = async ( payload, publicKey, privateKey) => {
 }
 
 module.exports = {
-  createTokenPair
+  createTokenPair,
+  generateKeyPairPromise
 }
