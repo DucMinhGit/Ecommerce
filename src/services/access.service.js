@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const shopModel = require('../models/shop.model');
 const KeyTokenService = require('./keyToken.service');
-const { createTokenPair, generateKeyPairPromise } = require('../auth/authUtils');
+const { createTokenPair } = require('../auth/authUtils');
 const { getInfoData } = require('../utils');
 const {
   SALT_OR_ROUNDS,
@@ -14,12 +14,13 @@ const {
   CODES
 } = require('../utils/const');
 
-
-class AccessService 
+class AccessService
 {
   static signUp = async ({ name, email, password }) => {
     try {
+
       const holderShop = await shopModel.findOne({ email }).lean();
+      
       if (holderShop) {
         return {
           code: CODES.EMAIL_ALREADY_EXISTS,
@@ -44,7 +45,7 @@ class AccessService
           privateKey
         });
 
-        if(!keyStore) {
+        if (!keyStore) {
           return {
             code: CODES.ERROR,
             message: MESSAGES.CREATE_PUBLIC_KEY_TOKEN_ERROR
@@ -52,7 +53,7 @@ class AccessService
         }
 
         const tokens = await createTokenPair({
-            userId: newShop._id, 
+            userId: newShop._id,
             email
           }, keyStore, privateKey
         );
@@ -60,12 +61,12 @@ class AccessService
         return {
           code: CODES.CREATED,
           metadata: {
-            shop: getInfoData({ 
+            shop: getInfoData({
               fields: [
                 '_id',
                 'name',
                 'email'
-              ], object: newShop 
+              ], object: newShop
             }), tokens
           }
         }
@@ -74,7 +75,7 @@ class AccessService
         code: CODES.SUCCESS,
         metadata: null
       }
-    } catch(error) {
+    } catch (error) {
       return {
         code: CODES.ERROR,
         message: error.message,
