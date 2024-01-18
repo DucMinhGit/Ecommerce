@@ -6,68 +6,78 @@ const shopModel = require('../models/shop.model');
 const KeyTokenService = require('./keyToken.service');
 const { createTokenPair, generateKeyPairPromise } = require('../auth/authUtils');
 const { getInfoData } = require('../utils');
+const {
+  SALT_OR_ROUNDS,
+  ENCRYPT_ENCODING,
+  ROLES,
+  MESSAGES,
+  CODES
+} = require('../utils/const');
 
-const RoleShop =  {
-  SHOP: 'SHOP',
-  WRITER: 'WRITER',
-  EDITOR: 'EDITOR',
-  ADMIN: 'ADMIN'
-}
 
-class AccessService {
-
+class AccessService 
+{
   static signUp = async ({ name, email, password }) => {
     try {
       const holderShop = await shopModel.findOne({ email }).lean();
       if (holderShop) {
         return {
-          code: 'xxx',
-          message: 'Email already!'
+          code: CODES.EMAIL_ALREADY_EXISTS,
+          message: MESSAGES.EMAIL_ALREADY_EXISTS
         }
       }
 
-      const passwordHash = await bcrypt.hash(password, 2);
+      const passwordHash = await bcrypt.hash(password, SALT_OR_ROUNDS);
 
       const newShop = await shopModel.create({
-        name, email, password: passwordHash, roles: [RoleShop.SHOP]
+        name, email, password: passwordHash, roles: [ROLES.SHOP]
       });
 
       if (newShop) {
         // Created privateKey, publicKey
-        const { privateKey, publicKey } = await generateKeyPairPromise();
+        const publicKey = crypto.randomBytes(64).toString(ENCRYPT_ENCODING);
+        const privateKey = crypto.randomBytes(64).toString(ENCRYPT_ENCODING);
 
-        const publicKeyString = await KeyTokenService.createKeyToken({
+        const keyStore = await KeyTokenService.createKeyToken({
           userId: newShop._id,
-          publicKey
+          publicKey,
+          privateKey
         });
 
-        if(!publicKeyString) {
+        if(!keyStore) {
           return {
-            code: 'xxx',
-            message: 'publicKeyString error'
+            code: CODES.ERROR,
+            message: MESSAGES.CREATE_PUBLIC_KEY_TOKEN_ERROR
           }
         }
-        const publicKeyObject = crypto.createPublicKey(publicKeyString);
 
-        const tokens = await createTokenPair({userId: newShop._id, email}, publicKeyObject, privateKey);
+        const tokens = await createTokenPair({
+            userId: newShop._id, 
+            email
+          }, keyStore, privateKey
+        );
 
         return {
-          code: 201,
+          code: CODES.CREATED,
           metadata: {
-            shop: getInfoData({ fields: ['_id', 'name', 'email'], object: newShop }),
-            tokens
+            shop: getInfoData({ 
+              fields: [
+                '_id',
+                'name',
+                'email'
+              ], object: newShop 
+            }), tokens
           }
         }
       }
       return {
-        code: 200,
+        code: CODES.SUCCESS,
         metadata: null
       }
     } catch(error) {
       return {
-        code: 'xxx',
+        code: CODES.ERROR,
         message: error.message,
-        status: 'error'
       }
     }
   }
