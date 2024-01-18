@@ -15,7 +15,8 @@ module.exports = {
     INTERNAL_SERVER_ERROR: 'Internal Server Error!',
     FORBIDDEN: 'Unauthorized access!',
     CONFLICT: 'Conflict error!',
-    BAD_REQUEST: 'Bad request error!'
+    BAD_REQUEST: 'Bad request error!',
+    REGISTER_SUCCESS: 'Account registration successful!'
   },
   CODES: {
     SUCCESS: 200,
@@ -26,6 +27,8 @@ module.exports = {
     CONFLICT: 409
   },
   STATUS: {
-    ERROR: 'error'
+    ERROR: 'error',
+    SUCCESS: 'success',
+    CREATED: 'created'
   }
 };
