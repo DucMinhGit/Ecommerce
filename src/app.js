@@ -37,6 +37,7 @@ const { default: helmet } = require('helmet');
  * khi ma mot nguoi dung chay mot request
 */
 const morgan = require('morgan');
+const { CODES, MESSAGES, STATUS } = require('./utils/const');
 
 require('dotenv').config();
 
@@ -118,5 +119,18 @@ require('./dbs/init.mongodb');
 app.use('/', require('./routes'));
 
 // handling error
+app.use((req, res, next) => {
+  const error = new Error(MESSAGES.NOT_FOUND);
+  error.status = CODES.NOT_FOUND;
+  next(error);
+});
 
+app.use((error, req, res, next) => {
+  const statusCode = error.status || CODES.ERROR
+  return res.status(statusCode).json({
+    status: STATUS.ERROR,
+    code: statusCode,
+    message: error.message || MESSAGES.INTERNAL_SERVER_ERROR
+  })
+})
 module.exports = app;

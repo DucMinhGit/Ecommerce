@@ -9,12 +9,23 @@ module.exports = {
   },
   MESSAGES: {
     EMAIL_ALREADY_EXISTS: 'Email already exists!',
-    CREATE_PUBLIC_KEY_TOKEN_ERROR: 'Error generating public key!'
+    CREATE_PUBLIC_KEY_TOKEN_ERROR: 'Error generating public key!',
+    NOT_FOUND: 'Not Found!',
+    ERROR: 'Error!',
+    INTERNAL_SERVER_ERROR: 'Internal Server Error!',
+    FORBIDDEN: 'Unauthorized access!',
+    CONFLICT: 'Conflict error!',
+    BAD_REQUEST: 'Bad request error!'
   },
   CODES: {
     SUCCESS: 200,
     CREATED: 201,
-    ERROR: 400,
-    EMAIL_ALREADY_EXISTS: 409
+    ERROR: 500,
+    NOT_FOUND: 404,
+    FORBIDDEN: 403,
+    CONFLICT: 409
+  },
+  STATUS: {
+    ERROR: 'error'
   }
 };
