@@ -17,7 +17,11 @@ module.exports = {
     CONFLICT: 'Conflict error!',
     BAD_REQUEST: 'Bad request error!',
     REGISTER_SUCCESS: 'Account registration successful!',
-    NOT_REGISTERED: 'Shop not registered!'
+    NOT_REGISTERED: 'Shop not registered!',
+    INVALID_REQUEST: 'Invalid Request!',
+    NOT_FOUND_KEY: 'Not found key!',
+    INVALID_USER: 'Invalid user!',
+    LOGOUT_SUCCESS: 'Logout Success!'
   },
   CODES: {
     SUCCESS: 200,

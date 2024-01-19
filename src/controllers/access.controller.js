@@ -8,7 +8,7 @@ class AccessController {
   login = async (req, res, next) => {
     new SuccessResponse({
       metadata: await AccessService.login(req.body)
-    }).send(res)
+    }).send(res);
   }
 
   signUp = async (req, res, next) => {
@@ -18,7 +18,14 @@ class AccessController {
       options: {
         limit: 10
       }
-    }).send(res)
+    }).send(res);
+  }
+
+  logout = async (req, res, next) => {
+    new SuccessResponse({
+      message: MESSAGES.LOGOUT_SUCCESS,
+      metadata: await AccessService.logout(req.keyStore)
+    }).send(res);
   }
 }
 
