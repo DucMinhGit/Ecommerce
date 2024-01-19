@@ -1,6 +1,6 @@
 'use strict'
 
-const { CODES, MESSAGES, STATUS } = require('../utils/const');
+const { CODES, STATUS } = require('../utils/const');
 
 class SuccessResponse
 {
@@ -41,5 +41,6 @@ class Created extends SuccessResponse {
 
 module.exports = {
   Success,
-  Created
+  Created,
+  SuccessResponse
 }

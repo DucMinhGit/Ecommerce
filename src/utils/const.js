@@ -16,7 +16,8 @@ module.exports = {
     FORBIDDEN: 'Unauthorized access!',
     CONFLICT: 'Conflict error!',
     BAD_REQUEST: 'Bad request error!',
-    REGISTER_SUCCESS: 'Account registration successful!'
+    REGISTER_SUCCESS: 'Account registration successful!',
+    NOT_REGISTERED: 'Shop not registered!'
   },
   CODES: {
     SUCCESS: 200,

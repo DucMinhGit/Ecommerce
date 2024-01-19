@@ -6,7 +6,7 @@ const shopModel = require('../models/shop.model');
 const KeyTokenService = require('./keyToken.service');
 const { createTokenPair } = require('../auth/authUtils');
 const { getInfoData } = require('../utils');
-const { ConflictRequestError, BadRequestError } = require('../core/error.response');
+const { ConflictRequestError, BadRequestError, AuthFailureError } = require('../core/error.response');
 const {
   SALT_OR_ROUNDS,
   ENCRYPT_ENCODING,
@@ -14,9 +14,43 @@ const {
   MESSAGES,
   CODES
 } = require('../utils/const');
+const { findByEmail } = require('./shop.service');
 
 class AccessService
 {
+  static login = async ({ email, password, refreshToken = null }) => {
+
+    const foundShop = await findByEmail({ email });
+    if (!foundShop) throw new BadRequestError(MESSAGES.NOT_REGISTERED);
+
+    const match = bcrypt.compare(password, foundShop.password);
+    if (!match) throw new AuthFailureError();
+
+    // Created privateKey, publicKey
+    const publicKey = crypto.randomBytes(64).toString(ENCRYPT_ENCODING);
+    const privateKey = crypto.randomBytes(64).toString(ENCRYPT_ENCODING);
+
+    const { _id: userId } = foundShop;
+    const tokens = await createTokenPair({ userId, email }, publicKey, privateKey);
+
+    await KeyTokenService.createKeyToken({
+      userId,
+      publicKey,
+      privateKey,
+      refreshToken: tokens.refreshToken
+    });
+
+    return {
+      shop: getInfoData({
+        fields: [
+          '_id',
+          'name',
+          'email'
+        ], object: foundShop
+      }), tokens
+    }
+  }
+
   static signUp = async ({ name, email, password }) => {
     const holderShop = await shopModel.findOne({ email }).lean();
   
