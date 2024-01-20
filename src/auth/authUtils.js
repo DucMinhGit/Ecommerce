@@ -2,7 +2,7 @@
 
 const JWT = require('jsonwebtoken');
 const { asyncHandler } = require('../helpers/asyncHandler');
-const { AuthFailureError, NotFoundError } = require('../core/error.response');
+const { AuthFailureError, NotFoundError, CreateFailureError } = require('../core/error.response');
 const { MESSAGES } = require('../utils/const');
 
 const { findByUserId } = require('../services/keyToken.service');
@@ -24,17 +24,9 @@ const createTokenPair = async ( payload, publicKey, privateKey) => {
       expiresIn: '7 days'
     });
 
-    //
-    JWT.verify(accessToken, publicKey, (error, decode) => {
-      if (error) {
-        console.log(`error verify::`, error);
-      } else {
-        console.log(`decode verify::`, decode);
-      }
-    })
     return { accessToken, refreshToken };
   } catch (error) {
-
+    throw new CreateFailureError(error.message);
   }
 }
 
@@ -49,7 +41,6 @@ const authentication = asyncHandler(async (req, res, next) => {
   if (!accessToken) throw new AuthFailureError(MESSAGES.INVALID_REQUEST);
 
   try {
-
     const decodeUser = JWT.verify(accessToken, keyStore.publicKey);
 
     if(userId !== decodeUser.userId) throw new AuthFailureError(MESSAGES.INVALID_USER);

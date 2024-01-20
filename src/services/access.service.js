@@ -6,7 +6,7 @@ const shopModel = require('../models/shop.model');
 const KeyTokenService = require('./keyToken.service');
 const { createTokenPair } = require('../auth/authUtils');
 const { getInfoData } = require('../utils');
-const { ConflictRequestError, BadRequestError, AuthFailureError } = require('../core/error.response');
+const { ConflictRequestError, BadRequestError, AuthFailureError, CreateFailureError } = require('../core/error.response');
 const {
   SALT_OR_ROUNDS,
   ENCRYPT_ENCODING,
@@ -94,14 +94,12 @@ class AccessService
               'name',
               'email'
             ], object: newShop
-          }), tokens
+          }), 
+          tokens
         }
       }
     }
-    return {
-      code: CODES.SUCCESS,
-      metadata: null
-    }
+    throw new CreateFailureError(MESSAGES.CREATE_SHOP_ERROR);
   }
 
   static logout = async (keyStore) => {

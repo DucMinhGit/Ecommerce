@@ -21,7 +21,8 @@ module.exports = {
     INVALID_REQUEST: 'Invalid Request!',
     NOT_FOUND_KEY: 'Not found key!',
     INVALID_USER: 'Invalid user!',
-    LOGOUT_SUCCESS: 'Logout Success!'
+    LOGOUT_SUCCESS: 'Logout Success!',
+    CREATE_SHOP_ERROR: 'There was an error when creating the shop, please come back after a few minutes'
   },
   CODES: {
     SUCCESS: 200,

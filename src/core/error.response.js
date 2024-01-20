@@ -37,9 +37,16 @@ class NotFoundError extends ErrorResponse {
   }
 }
 
+class CreateFailureError extends ErrorResponse  {
+  constructor(message = ReasonPhrases.INTERNAL_SERVER_ERROR) {
+    super(message)
+  }
+}
+
 module.exports = {
   ConflictRequestError,
   BadRequestError,
   AuthFailureError,
-  NotFoundError
+  NotFoundError,
+  CreateFailureError
 }
