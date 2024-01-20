@@ -43,10 +43,17 @@ class CreateFailureError extends ErrorResponse  {
   }
 }
 
+class ModelFailureError extends ErrorResponse  {
+  constructor(message = ReasonPhrases.INTERNAL_SERVER_ERROR) {
+    super(message)
+  }
+}
+
 module.exports = {
   ConflictRequestError,
   BadRequestError,
   AuthFailureError,
   NotFoundError,
-  CreateFailureError
+  CreateFailureError,
+  ModelFailureError
 }

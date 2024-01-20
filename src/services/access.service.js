@@ -6,7 +6,13 @@ const shopModel = require('../models/shop.model');
 const KeyTokenService = require('./keyToken.service');
 const { createTokenPair } = require('../auth/authUtils');
 const { getInfoData } = require('../utils');
-const { ConflictRequestError, BadRequestError, AuthFailureError, CreateFailureError } = require('../core/error.response');
+const { 
+  ConflictRequestError,
+  BadRequestError, 
+  AuthFailureError, 
+  CreateFailureError
+} = require('../core/error.response');
+
 const {
   SALT_OR_ROUNDS,
   ENCRYPT_ENCODING,
@@ -54,9 +60,7 @@ class AccessService
   static signUp = async ({ name, email, password }) => {
     const holderShop = await shopModel.findOne({ email }).lean();
   
-    if (holderShop) {
-      throw new ConflictRequestError(MESSAGES.EMAIL_ALREADY_EXISTS);
-    }
+    if (holderShop) throw new ConflictRequestError(MESSAGES.EMAIL_ALREADY_EXISTS);
 
     const passwordHash = await bcrypt.hash(password, SALT_OR_ROUNDS);
 
@@ -75,9 +79,7 @@ class AccessService
         privateKey
       });
 
-      if (!keyStore) {
-        throw new BadRequestError(MESSAGES.CREATE_PUBLIC_KEY_TOKEN_ERROR, CODES.ERROR);
-      }
+      if (!keyStore) throw new BadRequestError(MESSAGES.CREATE_PUBLIC_KEY_TOKEN_ERROR, CODES.ERROR);
 
       const tokens = await createTokenPair({
           userId: newShop._id,

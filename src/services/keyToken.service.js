@@ -2,6 +2,7 @@
 
 const keyTokenModel = require("../models/keytoken.model");
 const { Types } = require('mongoose');
+const { ModelFailureError } = require('../core/error.response');
 
 class KeyTokenService {
   static createKeyToken = async ({ userId, publicKey, privateKey, refreshToken }) => {
@@ -14,7 +15,7 @@ class KeyTokenService {
 
       return tokens ? tokens.publicKey : null;
     } catch (error) {
-      return error;
+      throw new ModelFailureError(error.message);
     }
   }
 
