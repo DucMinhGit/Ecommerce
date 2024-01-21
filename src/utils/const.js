@@ -22,7 +22,9 @@ module.exports = {
     NOT_FOUND_KEY: 'Not found key!',
     INVALID_USER: 'Invalid user!',
     LOGOUT_SUCCESS: 'Logout Success!',
-    CREATE_SHOP_ERROR: 'There was an error when creating the shop, please come back after a few minutes'
+    CREATE_SHOP_ERROR: 'There was an error when creating the shop, please come back after a few minutes!',
+    REFRESH_TOKEN_FORBIDDEN: 'Something wrong happend !! please relogin',
+    REFRESH_TOKEN_SUCCESS: 'Refresh token success!'
   },
   CODES: {
     SUCCESS: 200,

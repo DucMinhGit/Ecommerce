@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const shopModel = require('../models/shop.model');
 const KeyTokenService = require('./keyToken.service');
-const { createTokenPair } = require('../auth/authUtils');
+const { createTokenPair, verifyJWT } = require('../auth/authUtils');
 const { getInfoData } = require('../utils');
 const { 
   ConflictRequestError,
@@ -24,6 +24,38 @@ const { findByEmail } = require('./shop.service');
 
 class AccessService
 {
+  static handlerRefreshToken = async (refreshtoken) => {
+
+    const foundToken = await KeyTokenService.findByRefreshTokenUsed(refreshtoken);
+    if (foundToken) {
+      const { userId, email } = await verifyJWT(refreshtoken, foundToken.privateKey);
+      await KeyTokenService.removeKeyByUserId(userId);
+      throw new BadRequestError(MESSAGES.REFRESH_TOKEN_FORBIDDEN);
+    }
+    const holderToken = await KeyTokenService.findByRefreshToken(refreshtoken);
+    if(!holderToken) throw new AuthFailureError(MESSAGES.NOT_REGISTERED);
+
+    const { userId, email } = await verifyJWT(refreshtoken, holderToken.privateKey);
+    const foundShop = await findByEmail({email});
+    if(!foundShop) throw new AuthFailureError(MESSAGES.NOT_REGISTERED);
+
+    const tokens = await createTokenPair({ userId, email }, holderToken.publicKey, holderToken.privateKey);
+    
+    await holderToken.updateOne({
+      $set: {
+        refreshtoken: tokens.refreshToken,
+      },
+      $addToSet: {
+        refreshTokensUsed: refreshtoken
+      }
+    });
+    
+    return {
+      user: { userId, email },
+      tokens
+    }
+  }
+
   static login = async ({ email, password, refreshToken = null }) => {
 
     const foundShop = await findByEmail({ email });
