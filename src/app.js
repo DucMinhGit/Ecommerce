@@ -130,6 +130,7 @@ app.use((error, req, res, next) => {
   return res.status(statusCode).json({
     status: STATUS.ERROR,
     code: statusCode,
+    stack: error.stack,
     message: error.message || MESSAGES.INTERNAL_SERVER_ERROR
   })
 })

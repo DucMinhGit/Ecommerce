@@ -24,36 +24,32 @@ const { findByEmail } = require('./shop.service');
 
 class AccessService
 {
-  static handlerRefreshToken = async (refreshtoken) => {
+  static handlerRefreshToken = async ({refreshToken, user, keyStore}) => {
 
-    const foundToken = await KeyTokenService.findByRefreshTokenUsed(refreshtoken);
-    if (foundToken) {
-      const { userId, email } = await verifyJWT(refreshtoken, foundToken.privateKey);
+    const { userId, email } = user;
+
+    if (keyStore.refreshTokensUsed.includes(refreshToken)) {
       await KeyTokenService.removeKeyByUserId(userId);
       throw new BadRequestError(MESSAGES.REFRESH_TOKEN_FORBIDDEN);
     }
-    const holderToken = await KeyTokenService.findByRefreshToken(refreshtoken);
-    if(!holderToken) throw new AuthFailureError(MESSAGES.NOT_REGISTERED);
 
-    const { userId, email } = await verifyJWT(refreshtoken, holderToken.privateKey);
+    if (keyStore.refreshToken !== refreshToken) throw new AuthFailureError(MESSAGES.NOT_REGISTERED);
+    
     const foundShop = await findByEmail({email});
     if(!foundShop) throw new AuthFailureError(MESSAGES.NOT_REGISTERED);
 
-    const tokens = await createTokenPair({ userId, email }, holderToken.publicKey, holderToken.privateKey);
+    const tokens = await createTokenPair({ userId, email }, keyStore.publicKey, keyStore.privateKey);
     
-    await holderToken.updateOne({
+    await keyStore.updateOne({
       $set: {
-        refreshtoken: tokens.refreshToken,
+        refreshToken: tokens.refreshToken,
       },
       $addToSet: {
-        refreshTokensUsed: refreshtoken
+        refreshTokensUsed: refreshToken
       }
     });
     
-    return {
-      user: { userId, email },
-      tokens
-    }
+    return { user, tokens }
   }
 
   static login = async ({ email, password, refreshToken = null }) => {
