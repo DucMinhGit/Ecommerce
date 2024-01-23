@@ -39,7 +39,7 @@ class Product {
     this.product_attributes = product_attributes;
   }
 
-  async createProduct() {
+  async createProduct(product_id) {
     return {
       product: getInfoData({
         fields: [
@@ -51,7 +51,7 @@ class Product {
           "product_thumb",
           "product_quantity",
           "product_attributes"
-        ], object: await product.create(this)
+        ], object: await product.create({...this, _id: product_id})
       })
     }
   }
@@ -59,10 +59,13 @@ class Product {
 
 class Clothing extends Product {
   async createProduct() {
-    const newClothing = await clothing.create(this.product_attributes);
+    const newClothing = await clothing.create({
+      ...this.product_attributes,
+      product_shop: this.product_shop
+    });
     if (!newClothing) throw new BadRequestError(MESSAGES.CREATE_CLOTHING_ERROR);
 
-    const newProduct = await super.createProduct();
+    const newProduct = await super.createProduct(newClothing._id);
     if (!newProduct) throw new BadRequestError(MESSAGES.CREATE_PRODUCT_ERROR);
 
     return newProduct;
@@ -71,10 +74,13 @@ class Clothing extends Product {
 
 class Electronics extends Product {
   async createProduct() {
-    const newElectronics = await electronics.create(this.product_attributes);
+    const newElectronics = await electronics.create({
+      ...this.product_attributes,
+      product_shop: this.product_shop
+    });
     if (!newElectronics) throw new BadRequestError(MESSAGES.CREATE_CLOTHING_ERROR);
 
-    const newProduct = await super.createProduct();
+    const newProduct = await super.createProduct(newElectronics._id);
     if (!newProduct) throw new BadRequestError(MESSAGES.CREATE_PRODUCT_ERROR);
 
     return newProduct;
