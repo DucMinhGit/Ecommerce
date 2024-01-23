@@ -38,8 +38,8 @@ const electronicsSchema = new Schema({
   timestamps: true
 });
 
-modules.exports = {
+module.exports = {
   product: model(DOCUMENT_NAME, productSchema),
   electronics: model('Electronics', electronicsSchema),
-  clothingSchema: model('Clothing', clothingSchema)
+  clothing: model('Clothing', clothingSchema)
 }

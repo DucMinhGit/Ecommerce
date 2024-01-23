@@ -24,7 +24,11 @@ module.exports = {
     LOGOUT_SUCCESS: 'Logout Success!',
     CREATE_SHOP_ERROR: 'There was an error when creating the shop, please come back after a few minutes!',
     REFRESH_TOKEN_FORBIDDEN: 'Something wrong happend !! please relogin',
-    REFRESH_TOKEN_SUCCESS: 'Refresh token success!'
+    REFRESH_TOKEN_SUCCESS: 'Refresh token success!',
+    CREATE_CLOTHING_ERROR: 'Create new Clothing error!',
+    CREATE_ELECTRONICS_ERROR: 'Create new Electronis error!',
+    CREATE_PRODUCT_ERROR: 'Create Product error!',
+    INVALID_PRODUCT_TYPES: 'Invalid Product Types'
   },
   CODES: {
     SUCCESS: 200,
