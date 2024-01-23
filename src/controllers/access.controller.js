@@ -3,10 +3,13 @@
 const AccessService = require("../services/access.service");
 const { MESSAGES } = require('../utils/const');
 const { Created, SuccessResponse } = require('../core/success.response');
+const { NotFoundError } = require("../core/error.response");
 
 class AccessController {
 
   handlerRefreshToken = async (req, res, next) => {
+    if (!req.refreshToken) throw new NotFoundError(req.refreshToken);
+
     new SuccessResponse({
       message: MESSAGES.REFRESH_TOKEN_SUCCESS,
       metadata: await AccessService.handlerRefreshToken({

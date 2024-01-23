@@ -2,10 +2,15 @@
 
 const JWT = require('jsonwebtoken');
 const { asyncHandler } = require('../helpers/asyncHandler');
-const { AuthFailureError, NotFoundError, CreateFailureError } = require('../core/error.response');
 const { MESSAGES } = require('../utils/const');
-
 const { findByUserId } = require('../services/keyToken.service');
+
+const { 
+  AuthFailureError,
+  NotFoundError,
+  CreateFailureError,
+  BadRequestError
+} = require('../core/error.response');
 
 const HEADER = {
   API_KEY: 'x-api-key',
@@ -31,30 +36,6 @@ const createTokenPair = async ( payload, publicKey, privateKey) => {
   }
 }
 
-const authentication = asyncHandler(async (req, res, next) => {
-  const userId = req.headers[HEADER.CLIENT_ID];
-  if (!userId) throw new AuthFailureError(MESSAGES.INVALID_REQUEST);
-
-  const keyStore = await findByUserId(userId);
-  if (!keyStore) throw new NotFoundError(MESSAGES.NOT_FOUND_KEY);
-
-  const accessToken = req.headers[HEADER.AUTHORIZATION];
-  if (!accessToken) throw new AuthFailureError(MESSAGES.INVALID_REQUEST);
-
-  try {
-    const decodeUser = JWT.verify(accessToken, keyStore.publicKey);
-
-    if(userId !== decodeUser.userId) throw new AuthFailureError(MESSAGES.INVALID_USER);
-
-    req.keyStore = keyStore;
-
-    return next();
-
-  } catch (error) {
-    throw error;
-  }
-});
-
 const authenticationV2 = asyncHandler(async (req, res, next) => {
   const userId = req.headers[HEADER.CLIENT_ID];
   if (!userId) throw new AuthFailureError(MESSAGES.INVALID_REQUEST);
@@ -76,7 +57,7 @@ const authenticationV2 = asyncHandler(async (req, res, next) => {
       return next();
   
     } catch (error) {
-      throw error;
+      throw new BadRequestError(error.message);
     }
   }
 
@@ -93,7 +74,7 @@ const authenticationV2 = asyncHandler(async (req, res, next) => {
     return next();
 
   } catch (error) {
-    throw error;
+    throw new BadRequestError(error.message);
   }
 });
 
@@ -103,7 +84,6 @@ const verifyJWT = async (token, keySecret) => {
 
 module.exports = {
   createTokenPair,
-  authentication,
   verifyJWT,
   authenticationV2
 }
