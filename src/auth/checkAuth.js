@@ -14,13 +14,13 @@ const apiKey = async (req, res, next) => {
     const key = req.headers[HEADER.API_KEY]?.toString();
     if (!key) {
       return res.status(CODES.FORBIDDEN).json({
-        message: MESSAGES.FORBIDDEN
+        message: MESSAGES.FORBIDDEN + '1'
       })
     }
     const objKey = await findById(key);
     if (!objKey) {
       return res.status(CODES.FORBIDDEN).json({
-        message: MESSAGES.FORBIDDEN
+        message: MESSAGES.FORBIDDEN + '2'
       })
     }
     req.objKey = objKey;
@@ -34,13 +34,13 @@ const permission = (permission) => {
   return (req, res, next) => {
     if (!req.objKey.permissions) {
       return res.status(CODES.FORBIDDEN).json({
-        message: MESSAGES.FORBIDDEN
+        message: MESSAGES.FORBIDDEN + '3'
       })
     }
     const validPermission = req.objKey.permissions.includes(permission);
     if (!validPermission) {
       return res.status(CODES.FORBIDDEN).json({
-        message: MESSAGES.FORBIDDEN
+        message: MESSAGES.FORBIDDEN + '4'
       })
     }
     return next();
