@@ -1,10 +1,18 @@
 'use strict'
 
 const { BadRequestError } = require('../core/error.response');
-const { product, electronics, clothing, furniture } = require('../models/product.model');
-const { findAllDraftsForShop } = require('../models/repositories/product.repo');
 const { getInfoData } = require('../utils');
 const { MESSAGES } = require('../utils/const');
+const { 
+  product, 
+  electronics, 
+  clothing, furniture 
+} = require('../models/product.model');
+const { 
+  findAllDraftsForShop, 
+  publishProductByShop,
+  findAllPublishForShop
+} = require('../models/repositories/product.repo');
 
 class ProductFactory {
 
@@ -21,9 +29,18 @@ class ProductFactory {
     return new productClass(payload).createProduct();
   }
 
+  static async publishProductByShop({product_shop, product_id}) {
+    return await publishProductByShop({product_shop, product_id});
+  }
+
   static async findAllDraftsForShop({ product_shop, limit = 50 , skip = 0}) {
     const query = { product_shop, isDraft: true };
     return await findAllDraftsForShop({ query, limit, skip });
+  }
+
+  static async findAllPublishForShop({ product_shop, limit = 50 , skip = 0}) {
+    const query = { product_shop, isPublished: true };
+    return await findAllPublishForShop({ query, limit, skip });
   }
 }
 
