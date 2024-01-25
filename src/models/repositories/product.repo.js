@@ -1,7 +1,7 @@
 'use strict'
 
 const { Types } = require('mongoose');
-const { getSelectData } = require('../../utils/index');
+const { getSelectData, unGetSelectData } = require('../../utils/index');
 const { 
   product,
   clothing,
@@ -75,6 +75,10 @@ const findAllProducts = async ({limit, sort, page, filter, select}) => {
   return products;
 }
 
+const findProduct = async ({ product_id, unSelect }) => {
+  return await product.findById(product_id).select(unGetSelectData(unSelect));
+}
+
 const queryProduct = async ({query, limit, skip}) => {
   return await product.find(query)
   .populate('product_shop', 'name email -_id')
@@ -91,5 +95,6 @@ module.exports = {
   findAllPublishForShop,
   unPublishProductByShop,
   searchProductsByUser,
-  findAllProducts
+  findAllProducts,
+  findProduct
 }

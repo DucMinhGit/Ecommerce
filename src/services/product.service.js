@@ -14,7 +14,8 @@ const {
   findAllPublishForShop,
   unPublishProductByShop,
   searchProductsByUser,
-  findAllProducts
+  findAllProducts,
+  findProduct
 } = require('../models/repositories/product.repo');
 
 class ProductFactory {
@@ -63,8 +64,8 @@ class ProductFactory {
     select:['product_name', 'product_price']});
   }
 
-  static async findProduct() {
-
+  static async findProduct({product_id}) {
+    return await findProduct({product_id, unSelect: ['__v']});
   }
 }
 
