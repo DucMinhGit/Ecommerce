@@ -1,7 +1,7 @@
 'use strict'
 
 const { BadRequestError } = require('../core/error.response');
-const { getInfoData } = require('../utils');
+const { getInfoData, removeUndefineObject, updateNestedObjectParser } = require('../utils');
 const { MESSAGES } = require('../utils/const');
 const { 
   product, 
@@ -15,7 +15,8 @@ const {
   unPublishProductByShop,
   searchProductsByUser,
   findAllProducts,
-  findProduct
+  findProduct,
+  updateProductById
 } = require('../models/repositories/product.repo');
 
 class ProductFactory {
@@ -33,8 +34,11 @@ class ProductFactory {
     return new productClass(payload).createProduct();
   }
 
-  static async updateProduct(type, payload) {
+  static async updateProduct(type, productId, payload) {
+    const productClass = ProductFactory.productRegistry[type];
+    if(!productClass) throw new BadRequestError(`${MESSAGES.INVALID_PRODUCT_TYPES} ${type}`);
 
+    return new productClass(payload).updateProduct(productId);
   }
 
   static async publishProductByShop({product_shop, product_id}) {
@@ -106,6 +110,10 @@ class Product {
       })
     }
   }
+
+  async updateProduct(productId, payload) {
+    return await updateProductById({productId, payload, model: product})
+  }
 }
 
 class Clothing extends Product {
@@ -120,6 +128,20 @@ class Clothing extends Product {
     if (!newProduct) throw new BadRequestError(MESSAGES.CREATE_PRODUCT_ERROR);
 
     return newProduct;
+  }
+
+  async updateProduct(productId) {
+    const objectParams = removeUndefineObject(this);
+    if(objectParams.product_attributes) {
+      await updateProductById({
+        productId,
+        payload: updateNestedObjectParser(objectParams.product_attributes),
+        model: clothing
+      })
+    }
+
+    const updateProduct = await super.updateProduct(productId, updateNestedObjectParser(objectParams));
+    return updateProduct;
   }
 }
 
