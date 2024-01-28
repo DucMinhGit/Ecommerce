@@ -1,7 +1,7 @@
 'use strict'
 
 const { BadRequestError } = require('../core/error.response');
-const { getInfoData, removeUndefineObject, updateNestedObjectParser } = require('../utils');
+const { removeUndefineObject, updateNestedObjectParser } = require('../utils');
 const { MESSAGES } = require('../utils/const');
 const { 
   product, 
@@ -18,6 +18,7 @@ const {
   findProduct,
   updateProductById
 } = require('../models/repositories/product.repo');
+const { insertInventory } = require('../models/repositories/invetory.repo');
 
 class ProductFactory {
 
@@ -95,20 +96,16 @@ class Product {
   }
 
   async createProduct(product_id) {
-    return {
-      product: getInfoData({
-        fields: [
-          "product_name",
-          "product_description",
-          "product_price",
-          "product_shop",
-          "product_type",
-          "product_thumb",
-          "product_quantity",
-          "product_attributes"
-        ], object: await product.create({...this, _id: product_id})
-      })
+    const newProduct = await product.create({...this, _id: product_id});
+    if (newProduct) {
+      await insertInventory({
+        productId: newProduct._id,
+        shopId: this.product_shop,
+        stock: this.product_quantity
+      });
     }
+
+    return newProduct;
   }
 
   async updateProduct(productId, payload) {
