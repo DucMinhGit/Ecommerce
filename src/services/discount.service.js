@@ -1,10 +1,12 @@
 'use strict'
 
+const discount = require('../models/discount.model');
+const convertToObjectIdMongodb = require('../utils');
+const { MESSAGES } = require('../utils/const');
 const {
   BadRequestError
 } = require('../core/error.response');
-const discount = require('../models/discount.model');
-const convertToObjectIdMongodb = require('../utils');
+
 class DiscountService 
 {
   static async createDiscountCode(payload) {
@@ -28,11 +30,11 @@ class DiscountService
     } = payload;
 
     if (new Date() < new Date(start_date) || new Date() > new Date(end_date)) {
-      throw new BadRequestError('Discount code has expried!');
+      throw new BadRequestError(MESSAGES.DISCOUNT_EXPIRED);
     }
 
     if (new Date(start_date) >= new Date(end_date)) {
-      throw new BadRequestError('Start date must be before  end_date');
+      throw new BadRequestError(MESSAGES.DISCOUNT_ERROR_SET_DATE);
     }
 
     const foundDiscount = await discount.findOne({
@@ -41,7 +43,7 @@ class DiscountService
     }).lean();
 
     if (foundDiscount && foundDiscount.discount_is_active) {
-      throw new BadRequestError('Discount exists!');
+      throw new BadRequestError(MESSAGES.DISCOUNT_EXISTS);
     }
 
     const newDiscount = await discount.create({

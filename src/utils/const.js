@@ -28,7 +28,10 @@ module.exports = {
     CREATE_CLOTHING_ERROR: 'Create new Clothing error!',
     CREATE_ELECTRONICS_ERROR: 'Create new Electronis error!',
     CREATE_PRODUCT_ERROR: 'Create Product error!',
-    INVALID_PRODUCT_TYPES: 'Invalid Product Types'
+    INVALID_PRODUCT_TYPES: 'Invalid Product Types',
+    DISCOUNT_EXPIRED: 'Discount code has expried!',
+    DISCOUNT_ERROR_SET_DATE: 'Start date must be before end_date',
+    DISCOUNT_EXISTS: 'Discount exists!'
   },
   CODES: {
     SUCCESS: 200,
