@@ -4,7 +4,7 @@ const discount = require('../models/discount.model');
 const convertToObjectIdMongodb = require('../utils');
 const { MESSAGES } = require('../utils/const');
 const {
-  BadRequestError
+  BadRequestError, NotFoundError
 } = require('../core/error.response');
 
 class DiscountService 
@@ -67,5 +67,48 @@ class DiscountService
     });
 
     return newDiscount;
+  }
+
+  static async getAllDiscountCodesWithProduct({
+    code, shopId, userId, limit, page
+  }) {
+    const foundDiscount = await discount.findOne({
+      discount_code: code,
+      discount_shopId: convertToObjectIdMongodb(shopId)
+    }).lean();
+
+    if(!foundDiscount || !foundDiscount.discount_is_active) {
+      throw new NotFoundError('Discount not exists!');
+    }
+
+    const { discount_applies_to, discount_product_ids } = foundDiscount;
+    let products
+    if (discount_applies_to === 'all') {
+      products = await findAllProducts({
+        filter: {
+          product_shop: convertToObjectIdMongodb(shopId),
+          isPublished: true
+        },
+        limit: +limit,
+        page: +page,
+        sort: 'ctime',
+        select: ['product_name']
+      })
+    }
+
+    if (discount_applies_to === 'specific') {
+      products = await findAllProducts({
+        filter: {
+          _id: {$in: discount_product_ids},
+          isPublished: true
+        },
+        limit: +limit,
+        page: +page,
+        sort: 'ctime',
+        select: ['product_name']
+      })
+    }
+
+    return products;
   }
 }
