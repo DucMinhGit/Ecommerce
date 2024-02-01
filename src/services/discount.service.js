@@ -6,6 +6,7 @@ const { MESSAGES } = require('../utils/const');
 const {
   BadRequestError, NotFoundError
 } = require('../core/error.response');
+const { findAllDiscountCodesUnSelect } = require('../models/repositories/discount.repo');
 
 class DiscountService 
 {
@@ -110,5 +111,24 @@ class DiscountService
     }
 
     return products;
+  }
+
+  static async getAllDiscountCodesByShop({
+    limit,
+      page,
+      shopId
+  }) {
+    const discounts = await findAllDiscountCodesUnSelect({
+      limit: +limit,
+      page: +page,
+      filter:  {
+        discount_shopId: convertToObjectIdMongodb(shopId),
+        discount_is_active: true
+      },
+      unSelect: ['__v', 'discount_shopId'],
+      model: discount
+    });
+
+    return discounts;
   }
 }
