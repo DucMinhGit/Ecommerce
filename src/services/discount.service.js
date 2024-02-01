@@ -6,7 +6,7 @@ const { MESSAGES } = require('../utils/const');
 const {
   BadRequestError, NotFoundError
 } = require('../core/error.response');
-const { findAllDiscountCodesUnSelect } = require('../models/repositories/discount.repo');
+const { findAllDiscountCodesUnSelect, checkDiscountExists } = require('../models/repositories/discount.repo');
 
 class DiscountService 
 {
@@ -183,4 +183,39 @@ class DiscountService
       totalPrice: totalOrder - amount
     }
   }
+
+  static async deleteDiscountCode({ shopId, codeId }) {
+    const deleted = await discount.findOneAndDelete({
+      discount_code: codeId,
+      discount_shopId: convertToObjectIdMongodb(shopId)
+    });
+
+    return deleted;
+  }
+
+  static async cancelDiscountCode({ codeId, shopId, userId }) {
+    const foundDiscount = await checkDiscountExists({
+      model: discount,
+      filter: {
+        discount_code: codeId,
+        discount_shopId: convertToObjectIdMongodb(shopId)
+      }
+    });
+
+    if(!foundDiscount) throw new NotFoundError(`Discount doesn't exists!`);
+
+    const result = await discount.findByIdAndUpdate(foundDiscount._id, {
+      $pull: {
+        discount_users_used: userId
+      },
+      $inc: {
+        discount_max_uses: 1,
+        discount_uses_count: -1
+      }
+    });
+
+    return result;
+  }
 }
+
+module.exports = DiscountService;
