@@ -53,7 +53,7 @@ class DiscountService
       discount_type: type,
       discount_code: code,
       discount_value: value,
-      discount_count_min_order_value: min_order_value || 0,
+      discount_min_order_value: min_order_value || 0,
       discount_max_value: max_value,
       discount_start_date: new Date(start_date),
       discount_end_date: new Date(end_date),
@@ -130,5 +130,57 @@ class DiscountService
     });
 
     return discounts;
+  }
+
+  static async getDiscountAmount({ codeId, userId, shopId, products }) {
+    const foundDiscount = await checkDiscountExists({
+      model: discount,
+      filter: {
+        discount_code: code,
+        discount_shopId: convertToObjectIdMongodb(shopId)
+      }
+    });
+
+    if(!foundDiscount) throw new NotFoundError(`Discount doesn't exists!`);
+
+    const { 
+      discount_is_active,
+      discount_max_uses,
+      discount_min_order_value,
+      discount_max_uses_per_user
+    } = foundDiscount;
+
+    if (!discount_is_active) throw new NotFoundError(`Discount expired!`);
+    if (!discount_max_uses) throw new NotFoundError(`Discount are out!`);
+
+    if (new Date() < new Date(start_date) || new Date() > new Date(end_date)) {
+      throw new BadRequestError(MESSAGES.DISCOUNT_EXPIRED);
+    }
+
+    let totalOrder = 0;
+    if (discount_min_order_value > 0) {
+      totalOrder = products.reduce((acc, product) => {
+        return acc + (product.quantity * product.price)
+      }, 0);
+
+      if (totalOrder < discount_min_order_value) {
+        throw new NotFoundError(`Discount requires a minium order value of ${discount_min_order_value}!`);
+      }
+    }
+
+    if(discount_max_uses_per_user > 0) {
+      const userUsedDiscount = discount_users_used.find(user => user.userId === userId);
+      if (userUsedDiscount) {
+
+      }
+    }
+
+    const amount = discount_type === 'fixed_amount' ? discount_value : total * (discount_value / 100);
+
+    return {
+      totalOrder,
+      discount: amount,
+      totalPrice: totalOrder - amount
+    }
   }
 }
