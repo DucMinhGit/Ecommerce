@@ -79,7 +79,7 @@ class DiscountService
     }).lean();
 
     if(!foundDiscount || !foundDiscount.discount_is_active) {
-      throw new NotFoundError('Discount not exists!');
+      throw new NotFoundError(MESSAGES.DISCOUNT_NOT_EXISTS);
     }
 
     const { discount_applies_to, discount_product_ids } = foundDiscount;
@@ -141,7 +141,7 @@ class DiscountService
       }
     });
 
-    if(!foundDiscount) throw new NotFoundError(`Discount doesn't exists!`);
+    if(!foundDiscount) throw new NotFoundError(MESSAGES,DISCOUNT_NOT_EXISTS);
 
     const { 
       discount_is_active,
@@ -150,8 +150,8 @@ class DiscountService
       discount_max_uses_per_user
     } = foundDiscount;
 
-    if (!discount_is_active) throw new NotFoundError(`Discount expired!`);
-    if (!discount_max_uses) throw new NotFoundError(`Discount are out!`);
+    if (!discount_is_active) throw new NotFoundError(MESSAGES.DISCOUNT_EXPIRED);
+    if (!discount_max_uses) throw new NotFoundError(MESSAGES.DISCOUNT_ARE_OUT);
 
     if (new Date() < new Date(start_date) || new Date() > new Date(end_date)) {
       throw new BadRequestError(MESSAGES.DISCOUNT_EXPIRED);
@@ -164,7 +164,7 @@ class DiscountService
       }, 0);
 
       if (totalOrder < discount_min_order_value) {
-        throw new NotFoundError(`Discount requires a minium order value of ${discount_min_order_value}!`);
+        throw new NotFoundError(`${DISCOUNT_MIN_ORDER_VALUE} ${discount_min_order_value}!`);
       }
     }
 
@@ -202,7 +202,7 @@ class DiscountService
       }
     });
 
-    if(!foundDiscount) throw new NotFoundError(`Discount doesn't exists!`);
+    if(!foundDiscount) throw new NotFoundError(MESSAGES.DISCOUNT_NOT_EXISTS);
 
     const result = await discount.findByIdAndUpdate(foundDiscount._id, {
       $pull: {

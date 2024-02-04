@@ -31,7 +31,10 @@ module.exports = {
     INVALID_PRODUCT_TYPES: 'Invalid Product Types',
     DISCOUNT_EXPIRED: 'Discount code has expried!',
     DISCOUNT_ERROR_SET_DATE: 'Start date must be before end_date',
-    DISCOUNT_EXISTS: 'Discount exists!'
+    DISCOUNT_EXISTS: 'Discount exists!',
+    DISCOUNT_NOT_EXISTS: 'Discount not exists!',
+    DISCOUNT_ARE_OUT: 'Discount are out!',
+    DISCOUNT_MIN_ORDER_VALUE: 'Discount requires a minium order value of'
   },
   CODES: {
     SUCCESS: 200,
