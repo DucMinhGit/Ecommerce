@@ -1,12 +1,13 @@
 'use strict'
 
 const discount = require('../models/discount.model');
-const convertToObjectIdMongodb = require('../utils');
+const { convertToObjectIdMongodb } = require('../utils');
 const { MESSAGES } = require('../utils/const');
 const {
   BadRequestError, NotFoundError
 } = require('../core/error.response');
 const { findAllDiscountCodesUnSelect, checkDiscountExists } = require('../models/repositories/discount.repo');
+const { findAllProducts } = require('../models/repositories/product.repo');
 
 class DiscountService 
 {
@@ -26,6 +27,7 @@ class DiscountService
       value,
       max_value,
       max_uses,
+      users_used,
       uses_count,
       max_uses_per_user
     } = payload;
@@ -113,11 +115,7 @@ class DiscountService
     return products;
   }
 
-  static async getAllDiscountCodesByShop({
-    limit,
-      page,
-      shopId
-  }) {
+  static async getAllDiscountCodesByShop({ limit, page, shopId }) {
     const discounts = await findAllDiscountCodesUnSelect({
       limit: +limit,
       page: +page,
@@ -136,7 +134,7 @@ class DiscountService
     const foundDiscount = await checkDiscountExists({
       model: discount,
       filter: {
-        discount_code: code,
+        discount_code: codeId,
         discount_shopId: convertToObjectIdMongodb(shopId)
       }
     });
@@ -147,13 +145,18 @@ class DiscountService
       discount_is_active,
       discount_max_uses,
       discount_min_order_value,
-      discount_max_uses_per_user
+      discount_max_uses_per_user,
+      discount_start_date,
+      discount_end_date,
+      discount_users_used,
+      discount_type,
+      discount_value
     } = foundDiscount;
 
     if (!discount_is_active) throw new NotFoundError(MESSAGES.DISCOUNT_EXPIRED);
     if (!discount_max_uses) throw new NotFoundError(MESSAGES.DISCOUNT_ARE_OUT);
 
-    if (new Date() < new Date(start_date) || new Date() > new Date(end_date)) {
+    if (new Date() < new Date(discount_start_date) || new Date() > new Date(discount_end_date)) {
       throw new BadRequestError(MESSAGES.DISCOUNT_EXPIRED);
     }
 
@@ -175,7 +178,7 @@ class DiscountService
       }
     }
 
-    const amount = discount_type === 'fixed_amount' ? discount_value : total * (discount_value / 100);
+    const amount = discount_type === 'fixed_amount' ? discount_value : totalOrder * (discount_value / 100);
 
     return {
       totalOrder,

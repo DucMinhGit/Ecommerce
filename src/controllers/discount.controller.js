@@ -12,7 +12,7 @@ class DiscountController
         ...req.body,
         shopId: req.user.userId
       })
-    });
+    }).send(res);
   }
 
   getAllDiscountCodes = async(req, res, next) => {
@@ -22,7 +22,7 @@ class DiscountController
         ...req.body,
         shopId: req.user.userId
       })
-    })
+    }).send(res);
   }
 
   getDiscountAmount = async(req, res, next) => {
@@ -32,17 +32,16 @@ class DiscountController
         ...req.body,
         shopId: req.user.userId
       })
-    })
+    }).send(res);
   }
 
   getAllDiscountCodesWithProducts = async(req, res, next) => {
     new SuccessResponse({
       message: 'Successful code found',
       metadata: await DiscountService.getAllDiscountCodesWithProduct({
-        ...req.body,
-        shopId: req.user.userId
+        ...req.query,
       })
-    });
+    }).send(res);
   }
 }
 
