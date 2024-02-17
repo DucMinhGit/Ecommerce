@@ -16,6 +16,23 @@ class CartService
     return await cart.findOneAndUpdate(query, updateOrInsert, options);
   }
 
+  static async updateUserCartQuantity({ userId, product }) {
+    const { productId, quantity } = product;
+    const query = {
+                    cart_userId: userId,
+                    'cart_products.productId': productId,
+                    cart_state: 'active'
+                  };
+    const updateSet = {
+      $inc: {
+        'cart_products.$.quantity': quantity
+      }
+    };
+    const options = { upsert: true, new: true };
+
+    return await cart.findOneAndUpdate(query, updateSet, options);
+  }
+
   static async addToCart({ userId, product = {} }) {
     const userCart = await cart.findOne({ cart_userId: userId });
 
@@ -28,7 +45,7 @@ class CartService
       return await userCart.save();
     }
 
-    
+    return await CartService.updateUserCartQuantity({ userId, product });
   }
 }
 
