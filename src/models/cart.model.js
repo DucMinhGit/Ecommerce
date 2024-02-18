@@ -17,12 +17,12 @@ const cartSchema = new Schema({
   cart_userId: { type: Number, required: true }
 }, {
   collection: COLLECTION_NAME,
-  timeseries: {
+  timestamps: {
     createdAt: 'createdOn',
     updatedAt: 'modifiedOn'
   }
 });
 
 module.exports =  {
-  cart: model.apply(DOCUMENT_NAME, cartSchema)
+  cart: model(DOCUMENT_NAME, cartSchema)
 }

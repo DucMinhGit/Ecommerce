@@ -50,7 +50,9 @@ class CartService
     return await CartService.updateUserCartQuantity({ userId, product });
   }
 
-  static async addToCartV2({ userId, product = {} }) {
+  static async addToCartV2({ userId, shop_order_ids }) {
+
+
     const { productId, quantity, old_quantity } = shop_order_ids[0]?.item_products[0];
 
     const foundProduct = await getProductById(productId);
@@ -62,7 +64,7 @@ class CartService
     }
 
     if (quantity === 0) {
-
+      return await CartService.deleteUserCart({ userId, productId });
     }
 
     return await CartService.updateUserCartQuantity({
