@@ -87,6 +87,12 @@ class CartService
 
     return deleteCart;
   }
+
+  static async getListUserCart({ userId }) {
+    return await cart.findOne({
+      cart_userId: +userId
+    }).lean();
+  }
 }
 
 module.exports = CartService
