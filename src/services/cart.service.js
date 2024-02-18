@@ -73,6 +73,20 @@ class CartService
       }
     });
   }
+
+  static async deleteUserCart({userId, productId}) {
+    const query = { cart_userId: userId, cart_state: 'active' };
+    const updateSet = {
+                        $pull: {
+                          cart_products: {
+                            productId
+                          }
+                        }
+                      };
+    const deleteCart = await cart.updateOne(query, updateSet);
+
+    return deleteCart;
+  }
 }
 
 module.exports = CartService
