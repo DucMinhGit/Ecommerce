@@ -9,8 +9,8 @@ class CheckoutController
     new SuccessResponse({
       message: 'Checkout review ok',
       metadata: await CheckoutService.checkoutReview(req.body)
-    });
+    }).send(res);
   }
 }
 
-module.exports = new CheckoutController()
+module.exports = new CheckoutController;

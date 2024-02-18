@@ -167,7 +167,7 @@ class DiscountService
       }, 0);
 
       if (totalOrder < discount_min_order_value) {
-        throw new NotFoundError(`${DISCOUNT_MIN_ORDER_VALUE} ${discount_min_order_value}!`);
+        throw new NotFoundError(`${MESSAGES.DISCOUNT_MIN_ORDER_VALUE} ${discount_min_order_value}!`);
       }
     }
 
